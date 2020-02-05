@@ -45,6 +45,18 @@ datW$dateF <- as.Date(datW$DATE, "%Y-%m-%d")
 #and indicating that it should be treated as numeric data
 datW$year <- as.numeric(format(datW$dateF,"%Y"))
 
+chars <- c('a','b','c','d','e')
+numerics <- c(0.1,2.3,5.6,7.1,8.9)
+ints <- as.integer(c(1,2,3,4,5))
+fact1 <- factor(c("East","West","East","North","North","East","West",
+          "West","West","East","North"))
+fact2 <- factor(c(3,5,2,1,3,5))
+fact3 <- factor(c("a","A","a","a","A"))
+fact4 <- factor(c("b","B","b","b","B"))
+fact5 <- factor(c("c","C","c","c","C"))
+facts <- c(fact1,fact2,fact3,fact4,fact5)
+
+
 #find out all unique site names
 levels(datW$NAME)
 
@@ -220,3 +232,69 @@ pnorm(5,
 qnorm(0.95,
       mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE),
       sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+
+1 - pnorm(28.9,mean(datW$TAVE[datW$siteN == 1],na.rm=TRUE) + 4,
+      sd(datW$TAVE[datW$siteN == 1],na.rm=TRUE))
+
+hist(datW$PRCP[datW$siteN == 1],
+     freq=FALSE, 
+     main = paste(levels(datW$NAME)[1]),
+     xlab = "Average daily rainfall (degrees C)", 
+     ylab="Relative frequency",
+     col="aliceblue",
+     border="white")
+abline(v = mean(datW$PRCP[datW$siteN == 1],na.rm=TRUE), 
+       col = "orangered",
+       lwd = 3)
+abline(v = mean(datW$PRCP[datW$siteN == 1],na.rm=TRUE) - sd(datW$PRCP[datW$siteN == 1],na.rm=TRUE), 
+       col = "orangered", 
+       lty = 3,
+       lwd = 3)
+abline(v = mean(datW$PRCP[datW$PRCP == 1],na.rm=TRUE) + sd(datW$PRCP[datW$siteN == 1],na.rm=TRUE), 
+       col = "orangered", 
+       lty = 3,
+       lwd = 3)
+
+yearfact <- factor(datW$year)
+
+rf1sum <- vector()
+rf2sum <- vector()
+rf3sum <- vector()
+rf4sum <- vector()
+rf5sum <- vector()
+rf6sum <- vector()
+
+#vector of total rainfalls
+for(yr in levels(yearfact)){
+   rf1sum <- c(rf1sum,sum(datW$PRCP[datW$siteN == 1][datW$year == yr],na.rm=TRUE))
+   rf2sum <- c(rf2sum,sum(datW$PRCP[datW$siteN == 2][datW$year == yr],na.rm=TRUE))
+   rf3sum <- c(rf3sum,sum(datW$PRCP[datW$siteN == 3][datW$year == yr],na.rm=TRUE))
+   rf4sum <- c(rf4sum,sum(datW$PRCP[datW$siteN == 4][datW$year == yr],na.rm=TRUE))
+   rf5sum <- c(rf5sum,sum(datW$PRCP[datW$siteN == 5][datW$year == yr],na.rm=TRUE))
+   rf6sum <- c(rf6sum,sum(datW$PRCP[datW$siteN == 6][datW$year == yr],na.rm=TRUE))
+}
+hist(rf1sum,
+     freq=FALSE, 
+     main = paste(levels(datW$NAME)[1]),
+     xlab = "Annual rainfall (inches)", 
+     ylab="Relative frequency",
+     col="aliceblue",
+     border="white")
+abline(v = mean(rf1sum,na.rm=TRUE), 
+       col = "orangered",
+       lwd = 3)
+abline(v = mean(rf1sum,na.rm=TRUE) - sd(rf1sum,na.rm=TRUE), 
+       col = "orangered", 
+       lty = 3,
+       lwd = 3)
+abline(v = mean(rf1sum,na.rm=TRUE) + sd(rf1sum,na.rm=TRUE), 
+       col = "orangered", 
+       lty = 3,
+       lwd = 3)
+
+mean1 = mean(rf1sum)
+mean2 = mean(rf2sum)
+mean3 = mean(rf3sum)
+mean4 = mean(rf4sum)
+mean5 = mean(rf5sum)
+mean6 = mean(rf6sum)
