@@ -79,6 +79,7 @@ datW[datW$air.tempQ1 < 8,]
 #look at days with really high air temperature
 datW[datW$air.tempQ1 > 33,]
 
+#Question 5
 #plot precipitation and lightning strikes on the same plot
 #normalize lighting strikes to match precipitation
 lightscale <- (max(datW$precipitation)/max(datW$lightning.acvitivy)) * datW$lightning.acvitivy
@@ -101,8 +102,44 @@ points(datW$DD[lightscale > 0], lightscale[lightscale > 0],
 #create a new air temp column
 datW$air.tempQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
                           ifelse(datW$precipitation > 5, NA, datW$air.tempQ1))
+
+#Question 6:
 datW$wind.speedQ2 <- ifelse(datW$precipitation  >= 2 & datW$lightning.acvitivy >0, NA,
                           ifelse(datW$precipitation > 5, NA, datW$wind.speed))
 
 assert(sum(is.na(datW$air.tempQ2))==sum(is.na(datW$wind.speedQ2)),"Storm values were not excluded from wind speed")
 
+plot(datW$DD , datW$wind.speedQ2, xlab = "Day of Year", ylab = "Windspeed",
+     type="b")
+
+#Question 7
+
+plot(datW$DD, datW$soil.moisture, xlab = "Day of Year", ylab = "Soil Moisture",
+     type="b",col="red")
+lines(datW$DD, datW$wind.speedQ2, col = "blue")
+
+
+#Question 8
+
+meanAirTemp <- round(mean(datW$air.temperature, na.rm = TRUE),digits=1)
+meanWindSpeed <- round(mean(datW$wind.speed, na.rm = TRUE),digits=2)
+meanSoilMoist <- round(mean(datW$soil.moisture, na.rm = TRUE),digits=3)
+meanSoilTemp <- round(mean(datW$soil.temp, na.rm = TRUE),digits=1)
+experimentTime <- (tail(datW$doy, n = 1) - head(datW$doy, n = 1)) * 24 + (tail(datW$hour, n = 1) - head(datW$hour, n = 1))
+numObservations <- length(datW$air.temperature)
+totalPrecip <- sum(datW$precipitation, na.rm = TRUE)
+summaryExperiment <- data.frame(meanAirTemp=meanAirTemp,meanWindSpeed=meanWindSpeed,meanSoilMoist=meanSoilMoist,
+                                meanSoilTemp=meanSoilTemp,experimentTime=experimentTime,totalObservations=numObservations)
+
+
+#Question 9
+
+par(mfrow=c(2,2))
+plot(datW$doy[1:1411], datW$soil.moisture[1:1411], xlab = "Day of Year", ylab = "Soil Moisture",
+     type="b",col="red")
+plot(datW$doy[1:1411], datW$air.temperature[1:1411], xlab = "Day of Year", ylab = "Air Temperature",
+     type="b",col="blue")
+plot(datW$doy[1:1411], datW$soil.temp[1:1411], xlab = "Day of Year", ylab = "Soil Temperature",
+     type="b",col="green")
+plot(datW$doy[1:1411], datW$precipitation[1:1411], xlab = "Day of Year", ylab = "Precipitation",
+     type="b",col="orange")

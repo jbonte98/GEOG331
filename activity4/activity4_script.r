@@ -18,10 +18,11 @@ library(ggplot2)
 #3. iris sepal length x petal length
 
 versicolor <- iris[iris$Species == 'versicolor', ]
+
 #Dependent var ~ Independent var
-#lm.out <- lm(versicolor[,"Sepal.Width"] ~ versicolor[,"Sepal.Length"])
 x <- c("Sepal.Length","Petal.Length","Sepal.Length")
 y <- c("Sepal.Width","Petal.Width","Petal.Length")
+
 lm.out <- list()
 for (i in 1:3){
   lm.out[[i]] <- lm(versicolor[,y[i]] ~ versicolor[,x[i]])
@@ -35,7 +36,9 @@ for (i in 1:3){
 #to a new iris data frame
 height <- data.frame(Species = c("virginica","setosa","versicolor"),
                      Height.cm = c(60,100,11.8))
-
+#iris left
+#height right
+iris2 <- left_join(iris,height, by="Species")
 
 
 #####################################
@@ -45,13 +48,19 @@ height <- data.frame(Species = c("virginica","setosa","versicolor"),
 plot(iris$Sepal.Length,iris$Sepal.Width)
 
 #3a. now make the same plot in ggplot
-
+ggplot(data=iris, aes(Sepal.Length,Sepal.Width)) + 
+  geom_point()
 
 #3b. make a scatter plot with ggplot and get rid of  busy grid lines
-
+ggplot(data=iris, aes(Sepal.Length,Sepal.Width)) + 
+  geom_point() +
+  theme_classic()
 
 #3c.make a scatter plot with ggplot and get rid of grid lines
 #and show species by color increasing the point size
+ggplot(data=iris, aes(Sepal.Length,Sepal.Width,color=Species)) + 
+  geom_point(size=4) +
+  theme_classic()
 
 #####################################
 ##### Question: how did         #####
