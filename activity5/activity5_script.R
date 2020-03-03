@@ -72,10 +72,10 @@ datD$month <- month(datesD)
 
 
 #basic formatting
-aveF <- aggregate(datD$discharge, by=list(datD$month), FUN="mean")
-colnames(aveF) <- c("month","monthlyAve")
-sdF <- aggregate(datD$discharge, by=list(datD$month), FUN="sd")
-colnames(sdF) <- c("month","monthlySD")
+aveF <- aggregate(datD$discharge, by=list(datD$doy), FUN="mean")
+colnames(aveF) <- c("doy","dailyAve")
+sdF <- aggregate(datD$discharge, by=list(datD$doy), FUN="sd")
+colnames(sdF) <- c("doy","dailySD")
 
 #start new plot
 dev.new(width=8,height=8)
@@ -83,29 +83,30 @@ dev.new(width=8,height=8)
 #bigger margins
 par(mai=c(1,1,1,1))
 #make plot
-plot(aveF$month,aveF$monthlyAve, 
+plot(aveF$doy,aveF$dailyAve, 
      type="l", 
-     xlab="Month", 
+     xlab="Month of Year", 
      ylab=expression(paste("Discharge ft"^"3 ","sec"^"-1")),
      lwd=2,
-     ylim=c(-20,50),
+     ylim=c(-20,120),
      xaxs="i", yaxs ="i",#remove gaps from axes
      axes=FALSE)#no axes
-polygon(c(aveF$month, rev(aveF$month)),#x coordinates
-        c(aveF$monthlyAve-sdF$monthlySD,rev(aveF$monthlyAve+sdF$monthlySD)),#ycoord
+polygon(c(aveF$doy, rev(aveF$doy)),#x coordinates
+        c(aveF$dailyAve-sdF$dailySD,rev(aveF$dailyAve+sdF$dailySD)),#ycoord
         col=rgb(0.392, 0.584, 0.929,.2), #color that is semi-transparent
         border=NA#no border
-)       
-axis(1, seq(0,12, by=1), #tick intervals
-     lab=seq(0,12, by=1)) #tick labels
-axis(2, seq(-20,50, by=10),
-     seq(-20,50, by=10),
+)
+monthFirst <- c(1,32,60,91,121,152,182,213,243,274,304,334)
+monthNames <- c('January','February','March','April','May','June','July','August','September','October','November','December')
+axis(1, at=monthFirst, #tick intervals
+     lab=monthNames) #tick labels
+axis(2, seq(-20,120, by=20),
+     seq(-20,120, by=20),
      las = 2)#show ticks at 90 degree angle
 
 #Add 2017 line
-aveF2017 <- aggregate(datD$discharge[datD$year == 2017], by=list(datD$month[datD$year == 2017]), FUN="mean")
-colnames(aveF2017) <- c("month","monthlyAve")
-lines(aveF2017$month,aveF2017$monthlyAve,col="red")
+datD17 = subset(datD,year == 2017)
+lines(datD17$doy,datD17$discharge,col="red")
 
 legend("topright", c("mean","1 standard deviation","2017"), #legend items
        lwd=c(2,NA,1),#lines
@@ -227,7 +228,7 @@ season2016 <- function(doy){
         else if (doy >= 80 & doy < 172){
                 result <- "Spring"
         }
-        else if (doy >= 172 & doy < 286){
+        else if (doy >= 172 & doy < 266){
                 result <- "Summer"
         }
         else{
@@ -251,7 +252,7 @@ season2017 <- function(doy){
         else if (doy >= 79 & doy < 171){
                 result <- "Spring"
         }
-        else if (doy >= 171 & doy < 285){
+        else if (doy >= 171 & doy < 265){
                 result <- "Summer"
         }
         else{
