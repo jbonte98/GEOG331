@@ -116,26 +116,22 @@ legend("topright", c("mean","1 standard deviation","2017"), #legend items
 
 
 #####         QUESTION 7     #####
-datP$dates <- round_date(ymd_hm(datP$DATE),unit="day")
-datP$datesFactor <- as.factor(datP$dates)
-datD$dates <- datesD
+library(dplyr)
 
-fullData <- function(date){
-        dischargeDate = subset(datP,dates==date)
-        return (nrow(dischargeDate) >= 24)
-}
+aggregator24 = aggregate(datP,list(datP$doy,datP$year),length)
+data24hrs = aggregator24[aggregator24$HPCP == 24,c(1,2)]
+names(data24hrs)[1] <- "doy"
+names(data24hrs)[2] <- "year"
 
-array <- c()
-for(i in levels(datP$datesFactor)){
-        if(fullData(ymd(i)) == TRUE){
-                array <- c(array, i)
-        }
-}
+overlappingdates <- inner_join(data24hrs,datD)
 
-plot(datD$doy,datD$discharge)
-for (i in array) {
-        points(datD$doy[datD$dates == i],datD$discharge[datD$dates == i],col="red")
-}
+dev.new(width=8,height=8)
+temp <- ggplot(datD,aes(x=doyPlot,y=discharge)) + geom_point() + 
+        geom_point(data=overlappingdates,aes(x=doy,y=discharge),color="red") +
+        ggtitle("Discharge over all days of Year") + 
+        scale_x_discrete(breaks=c(20,40,60,80,100,120,140,160,180,200,220,240,260,280,300,320,340,360)) +
+        xlab("Doy") + ylab("Discharge")
+temp
 
 #####         QUESTION 8     #####
 
