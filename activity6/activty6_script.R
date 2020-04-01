@@ -174,12 +174,16 @@ meanChange <- zonal(NDVIfit, #NDVI function to summarize
                     glacZones,#raster with zones
                     "mean")#function to apply
 head(meanChange)
-g2015p@data$meanChange <- meanChange[2:40]
+g2015p@data$meanChange <- meanChange[2:40,-1]
 spplot(g2015p,"meanChange",col="transparent")
 
 #### Question 10 ####
 #### Question 11 ####
-g2015p@data$NDVImean <- 
-temp <- ifelse(g2015p@data$NDVImean)
-g2015p@data$NDVIcol <- g2015p@data$NDVImean
+NDVImean <- zonal(NDVIfit,
+                  glacZones,
+                  "max")
+mean(NDVImean)
+g2015p@data$NDVImean <- NDVImean[2:40,-1]
+g2015p@data$NDVIcol <- ifelse(g2015p@data$NDVImean,"blue","red")
+plot(NDVIraster[[14]])
 plot(g2015p, add=TRUE, col=paste(g2015p@data$NDVIcol),border=FALSE)
